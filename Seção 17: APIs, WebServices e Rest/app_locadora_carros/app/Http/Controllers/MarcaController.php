@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class MarcaController extends Controller
 {
+    public function __construct(Marca $marca)
+    {
+        $this->marca = $marca;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +19,7 @@ class MarcaController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json($this->marca->all(), 200);
     }
 
     /**
@@ -35,19 +40,41 @@ class MarcaController extends Controller
      */
     public function store(Request $request)
     {
-        $marca = Marca::create($request->all());
-        return $marca;
+        // validações colocadas no model
+        // $regras = [
+        //     'nome' => 'required|unique:marcas',
+        //     'imagem' => 'required'
+        // ];
+
+        // $feedback = [
+        //     'required' => 'O campo :attribute é obrigatório',
+        //     'nome.unique' => 'O nome da marca já existe'
+        // ];
+
+        $request->validate($this->marca->rules(), $this->marca->feedback());
+
+        $marca = $this->marca->create($request->all());
+
+        return response()->json($marca, 201);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Marca  $marca
+     * @param  Integer
      * @return \Illuminate\Http\Response
      */
-    public function show(Marca $marca)
+    public function show($id)
     {
-        //
+        $marca = $this->marca->find($id);
+
+        if ($marca === null) {
+            return response()->json([
+                'erro' => 'Recurso pesquisado não encontrado'
+            ], 404);
+        }
+
+        return response()->json($marca, 200);
     }
 
     /**
@@ -65,22 +92,46 @@ class MarcaController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Marca  $marca
+     * @param  Integer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Marca $marca)
+    public function update(Request $request, $id)
     {
-        //
+        $marca = $this->marca->find($id);
+
+        if ($marca === null) {
+            return response()->json([
+                'erro' => 'Impossível realizar a atualização. Recurso pesquisado não encontrado.'
+            ], 404);
+        }
+
+        $request->validate($marca->rules(), $marca->feedback());
+
+        $marca->update($request->all());
+
+        return response()->json($marca, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Marca  $marca
+     * @param  Integer
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Marca $marca)
+    public function destroy($id)
     {
-        //
+        $marca = $this->marca->find($id);
+
+        if ($marca === null) {
+            return response()->json([
+                'erro' => 'Impossível realizar a exclusão. Recurso pesquisado não encontrado.'
+            ], 404);
+        }
+
+        $marca->delete();
+
+        return response()->json([
+            'msg' => 'A marca foi removida com sucesso!'
+        ], 200);
     }
 }
