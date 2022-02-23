@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Marca;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MarcaController extends Controller
 {
@@ -52,8 +53,13 @@ class MarcaController extends Controller
         // ];
 
         $request->validate($this->marca->rules(), $this->marca->feedback());
+        $imagem = $request->file('imagem');
+        $imagem_urn = $imagem->store('imagens', 'public'); // pasta, disco
 
-        $marca = $this->marca->create($request->all());
+        $marca = $this->marca->create([
+            'nome' => $request->nome,
+            'imagem' => $imagem_urn
+        ]);
 
         return response()->json($marca, 201);
     }
@@ -97,6 +103,8 @@ class MarcaController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // imagens no request só funcionam com o método POST, com outros verbos o request file não vai existir
+        // para essa situações de atualização de imagens, para no form a chave _method = PUT ou PATCH
         $marca = $this->marca->find($id);
 
         if ($marca === null) {
@@ -105,9 +113,36 @@ class MarcaController extends Controller
             ], 404);
         }
 
-        $request->validate($marca->rules(), $marca->feedback());
+        if ($request->method() === 'PATCH') {
+            // PATCH para atualização parcial do recurso
+            $regrasDinamicas = [];
 
-        $marca->update($request->all());
+            // percorrendo todas as regras definidas no model
+            foreach ($marca->rules() as $input => $regra) {
+                // coletar a regra para o campo enviado
+                if (array_key_exists($input, $request->all())) {
+                    $regrasDinamicas[$input] = $regra;
+                }
+            }
+
+            $request->validate($regrasDinamicas, $marca->feedback());
+        } else {
+            // PUT para atualização completa do recurso
+            $request->validate($marca->rules(), $marca->feedback());
+        }
+
+        // remove o arquivo antigo, caso um novo arquivo tenha sido enviado no request
+        if ($request->file('imagem')) {
+            Storage::disk('public')->delete($marca->imagem);
+        }
+
+        $imagem = $request->file('imagem');
+        $imagem_urn = $imagem->store('imagens', 'public'); // pasta, disco
+
+        $marca->update([
+            'nome' => $request->nome,
+            'imagem' => $imagem_urn
+        ]);
 
         return response()->json($marca, 200);
     }
@@ -127,6 +162,9 @@ class MarcaController extends Controller
                 'erro' => 'Impossível realizar a exclusão. Recurso pesquisado não encontrado.'
             ], 404);
         }
+
+        // remove o arquivo antigo, caso um novo arquivo tenha sido enviado no request
+        Storage::disk('public')->delete($marca->imagem);
 
         $marca->delete();
 
