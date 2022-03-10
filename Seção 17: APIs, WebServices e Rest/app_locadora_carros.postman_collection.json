@@ -1,0 +1,271 @@
+{
+	"info": {
+		"_postman_id": "a2d25192-1eae-4b7f-a8e0-75009fbafb1f",
+		"name": "app_locadora_carros",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Modelo",
+			"item": [
+				{
+					"name": "Listar modelos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/modelos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"modelos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Criar modelo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "marca_id",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "nome",
+									"value": "Modelo 1",
+									"type": "default"
+								},
+								{
+									"key": "imagem",
+									"type": "file",
+									"src": "/home/leandro/Área de Trabalho/desenvolvimento-web-avancado-2022-com-php-laravel-e-vuejs/Seção 17: APIs, WebServices e Rest/imagens_marcas/toyota.png"
+								},
+								{
+									"key": "numero_portas",
+									"value": "4",
+									"type": "default"
+								},
+								{
+									"key": "lugares",
+									"value": "5",
+									"type": "default"
+								},
+								{
+									"key": "air_bag",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "abs",
+									"value": "1",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/modelos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"modelos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar modelo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/modelos/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"modelos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar modelo",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/modelos/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"modelos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deletar modelo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/modelos/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"modelos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Marca",
+			"item": [
+				{
+					"name": "Listar marcas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/marcas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"marcas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Criar marca",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nome",
+									"value": "Marca 1",
+									"type": "default"
+								},
+								{
+									"key": "imagem",
+									"type": "file",
+									"src": "/home/leandro/Área de Trabalho/desenvolvimento-web-avancado-2022-com-php-laravel-e-vuejs/Seção 17: APIs, WebServices e Rest/imagens_marcas/volkswagen.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/marcas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"marcas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar marca",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/marcas/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"marcas",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar marca",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/modelos/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"modelos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
