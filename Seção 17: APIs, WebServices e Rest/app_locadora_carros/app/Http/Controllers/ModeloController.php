@@ -18,13 +18,28 @@ class ModeloController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        // para usar sem o relacionamento marca
-        // return response()->json($this->modelo->all(), 200);
+        $modelos = [];
 
-        // para usar o relacionamento na listagem de todos os modelos
-        return response()->json($this->modelo->with('marca')->get(), 200);
+        if ($request->has('atributos')) {
+            $atributos = $request->atributos;
+
+            // atributos = id,name,imagem,marca_id
+            // http://localhost:8000/api/modelos?atributos=id,nome,imagem,marca_id
+            // precisa do marca_id para que o with funcione (a coluna da fk precisa esta no contexto)
+            $modelos = $this->modelo->selectRaw($atributos)->with('marca')->get();
+        } else {
+            // para usar sem o relacionamento marca
+            // return response()->json($this->modelo->all(), 200);
+
+            // para usar o relacionamento na listagem de todos os modelos
+            // return response()->json($this->modelo->with('marca')->get(), 200);
+
+            $modelos = $this->modelo->with('marca')->get();
+        }
+
+        return response()->json($modelos, 200);
     }
 
     /**
