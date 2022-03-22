@@ -5,16 +5,41 @@ namespace App\Http\Controllers;
 use App\Models\Carro;
 use Illuminate\Http\Request;
 
+use App\Repositories\CarroRepository;
+
 class CarroController extends Controller
 {
+    public function __construct(Carro $carro)
+    {
+        $this->carro = $carro;
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $carroRepository = new CarroRepository($this->carro);
+
+        if ($request->has('atributos_modelos')) {
+            $atributosModelos = 'modelos:id,'.$request->atributos_modelos;
+            $carroRepository->selectAtributosRegistrosRelacionados($atributosModelos);
+        } else {
+            $carroRepository->selectAtributosRegistrosRelacionados('modelos');
+        }
+
+        // incompleto, melhorar
+        if ($request->has('filtro')) {
+            $carroRepository->filtro($request->filtro);
+        }
+
+        if ($request->has('atributos')) {
+            $carroRepository->selectAtributos($request->atributos);
+        }
+
+        return response()->json($carroRepository->getResultado(), 200);
     }
 
     /**
@@ -35,7 +60,15 @@ class CarroController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate($this->carro->rules(), $this->carro->feedback());
+        $carro = $this->carro->create([
+            'modelo_id' => $request->modelo_id,
+            'placa' => $request->placa,
+            'disponivel' => $request->disponivel,
+            'km' => $request->km
+        ]);
+
+        return response()->json($carro, 201);
     }
 
     /**
