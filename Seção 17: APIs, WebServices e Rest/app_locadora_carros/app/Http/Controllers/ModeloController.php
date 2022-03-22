@@ -6,6 +6,8 @@ use App\Models\Modelo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+use App\Repositories\ModeloRepository;
+
 class ModeloController extends Controller
 {
     public function __construct(Modelo $modelo)
@@ -20,26 +22,45 @@ class ModeloController extends Controller
      */
     public function index(Request $request)
     {
-        $modelos = [];
+        $modeloRepository = new ModeloRepository($this->modelo);
 
-        if ($request->has('atributos')) {
-            $atributos = $request->atributos;
+        // http://localhost:8000/api/modelos?atributos=id,nome,imagem,marca_id&atributos_marca=nome&filtro=nome
 
-            // atributos = id,name,imagem,marca_id
-            // http://localhost:8000/api/modelos?atributos=id,nome,imagem,marca_id
-            // precisa do marca_id para que o with funcione (a coluna da fk precisa esta no contexto)
-            $modelos = $this->modelo->selectRaw($atributos)->with('marca')->get();
+        if ($request->has('atributos_marca')) {
+            $atributosMarca = 'marca:id,'.$request->atributos_marca;
+            $modeloRepository->selectAtributosRegistrosRelacionados($atributosMarca);
         } else {
-            // para usar sem o relacionamento marca
-            // return response()->json($this->modelo->all(), 200);
-
-            // para usar o relacionamento na listagem de todos os modelos
-            // return response()->json($this->modelo->with('marca')->get(), 200);
-
-            $modelos = $this->modelo->with('marca')->get();
+            $modeloRepository->selectAtributosRegistrosRelacionados('marca');
         }
 
-        return response()->json($modelos, 200);
+        // incompleto, melhorar
+        if ($request->has('filtro')) {
+            $modeloRepository->filtro($request->filtro);
+        }
+
+        if ($request->has('atributos')) {
+            $modeloRepository->selectAtributos($request->atributos);
+        }
+
+        // if ($request->has('atributos')) {
+        //     $atributos = $request->atributos;
+
+        //     // atributos = id,name,imagem,marca_id
+        //     // http://localhost:8000/api/modelos?atributos=id,nome,imagem,marca_id
+        //     // precisa do marca_id para que o with funcione (a coluna da fk precisa esta no contexto)
+        //     // with permite o relacionamento e tb as colunas
+        //     $modelos = $modelos->selectRaw($atributos)->get();
+        // } else {
+        //     // para usar sem o relacionamento marca
+        //     // return response()->json($this->modelo->all(), 200);
+
+        //     // para usar o relacionamento na listagem de todos os modelos
+        //     // return response()->json($this->modelo->with('marca')->get(), 200);
+
+        //     $modelos = $modelos->get();
+        // }
+
+        return response()->json($modeloRepository->getResultado(), 200);
     }
 
     /**
